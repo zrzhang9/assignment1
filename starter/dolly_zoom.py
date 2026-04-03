@@ -17,8 +17,8 @@ from starter.utils import get_device, get_mesh_renderer
 
 def dolly_zoom(
     image_size=256,
-    num_frames=10,
-    duration=3,
+    num_frames=100,
+    duration=6,
     device=None,
     output_file="output/dolly.gif",
 ):
@@ -31,11 +31,12 @@ def dolly_zoom(
     lights = pytorch3d.renderer.PointLights(location=[[0.0, 0.0, -3.0]], device=device)
 
     fovs = torch.linspace(5, 120, num_frames)
+    CONSTANT_FOCAL_LENGTH_DISTANCE_RATIO = 0.3
 
     renders = []
     for fov in tqdm(fovs):
-        distance = 3  # TODO: change this.
-        T = [[0, 0, 3]]  # TODO: Change this.
+        distance = 1.0 / (CONSTANT_FOCAL_LENGTH_DISTANCE_RATIO * torch.tan(torch.deg2rad(fov / 2.0)))
+        T = [[0, 0, distance]]
         cameras = pytorch3d.renderer.FoVPerspectiveCameras(fov=fov, T=T, device=device)
         rend = renderer(mesh, cameras=cameras, lights=lights)
         rend = rend[0, ..., :3].cpu().numpy()  # (N, H, W, 3)
@@ -52,7 +53,7 @@ def dolly_zoom(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--num_frames", type=int, default=10)
+    parser.add_argument("--num_frames", type=int, default=50)
     parser.add_argument("--duration", type=float, default=3)
     parser.add_argument("--output_file", type=str, default="images/dolly.gif")
     parser.add_argument("--image_size", type=int, default=256)

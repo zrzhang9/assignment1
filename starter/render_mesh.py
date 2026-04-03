@@ -39,6 +39,7 @@ def render_cow(
         textures=pytorch3d.renderer.TexturesVertex(textures),
     )
     mesh = mesh.to(device)
+    print(len(mesh))
 
     # Prepare the camera:
     cameras = pytorch3d.renderer.FoVPerspectiveCameras(
