@@ -94,9 +94,6 @@ if __name__ == "__main__":
     NUMBER_CAMERAS = 100
     DISTANCE_M = 3.0
     rendered_images = generate_360_images(mesh, NUMBER_CAMERAS, DISTANCE_M)
-    print("rendered_images: ", len(rendered_images))    
-    plt.imsave("images/cow_test.jpg", rendered_images[0])
-    print("Successfully rendered the mesh at different angles.")
 
     # Save the images as a gif.
     OUTPUT_GIF_FILEPATH = "images/cow_360.gif"
