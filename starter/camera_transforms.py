@@ -7,6 +7,7 @@ import argparse
 import matplotlib.pyplot as plt
 import pytorch3d
 import torch
+from scipy.spatial.transform import Rotation
 
 from starter.utils import get_device, get_mesh_renderer
 
@@ -38,7 +39,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--cow_path", type=str, default="data/cow.obj")
     parser.add_argument("--image_size", type=int, default=256)
-    parser.add_argument("--output_path", type=str, default="images/textured_cow.jpg")
+    parser.add_argument("--output_path", type=str, default="images/textured_cow_rotation_1.jpg")
     args = parser.parse_args()
-    render_textured_cow(cow_path=args.cow_path, image_size=args.image_size)
-    plt.imsave(args.output_path, render_textured_cow())
+    world_SO3_camera1 = Rotation.from_euler('z', -90, degrees=True)
+    camera_t_camera2 = [0, 0, 2.0]
+    camera_SO3_camera3 = Rotation.from_euler('y', 20, degrees=True)
+    camera_t_camera3 = [-0.4, -0.2, -0.05]
+    camera_SO3_camera4 = Rotation.from_euler('y', 90, degrees=True)
+    COW1_FILEPATH = "images/textured_cow_transformation_1.jpg"
+    COW2_FILEPATH = "images/textured_cow_transformation_2.jpg"
+    COW3_FILEPATH = "images/textured_cow_transformation_3.jpg"
+    COW4_FILEPATH = "images/textured_cow_transformation_4.jpg"
+    plt.imsave(COW1_FILEPATH, render_textured_cow(cow_path=args.cow_path, image_size=args.image_size, R_relative=camera_SO3_camera1.as_matrix(), T_relative=[0, 0, 0]))
+    plt.imsave(COW2_FILEPATH, render_textured_cow(cow_path=args.cow_path, image_size=args.image_size, T_relative=camera_t_camera2))
+    plt.imsave(COW3_FILEPATH, render_textured_cow(cow_path=args.cow_path, image_size=args.image_size, R_relative=camera_SO3_camera3.as_matrix(), T_relative=camera_t_camera3))
+    plt.imsave(COW4_FILEPATH, render_textured_cow(cow_path=args.cow_path, image_size=args.image_size, R_relative=camera_SO3_camera4.as_matrix(), T_relative=[-3.0, 0, 2.5]))
