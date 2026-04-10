@@ -23,9 +23,7 @@ def render_point_cloud(point_cloud: pytorch3d.structures.Pointclouds, cameras: p
     )
     point_cloud = point_cloud.extend(len(cameras))
     rendered_point_clouds = point_cloud_renderer(point_cloud, cameras=cameras)
-    print('rendered_point_clouds1.shape:', rendered_point_clouds.shape)
     rendered_point_clouds = rendered_point_clouds.cpu().numpy()[..., :3]
-    print('rendered_point_clouds2.shape:', rendered_point_clouds.shape)
     rendered_point_clouds = (rendered_point_clouds * 255).clip(0, 255).astype(np.uint8)
     return rendered_point_clouds
 
@@ -96,8 +94,6 @@ if __name__ == "__main__":
     # Combine the two point clouds to get the union of the two.
     point_clouds1 = rgbd_to_point_cloud(rgbd_image_data1)
     point_clouds2 = rgbd_to_point_cloud(rgbd_image_data2)
-    print('point_clouds1.points_packed().shape:', point_clouds1.points_packed().shape)
-    print('point_clouds2.points_packed().shape:', point_clouds2.points_packed().shape)
     all_points = torch.cat([point_clouds1.points_packed(), point_clouds2.points_packed()], dim=0)
     all_features = torch.cat([point_clouds1.features_packed(), point_clouds2.features_packed()], dim=0)
     all_point_clouds = pytorch3d.structures.Pointclouds(points=[all_points], features=[all_features])
